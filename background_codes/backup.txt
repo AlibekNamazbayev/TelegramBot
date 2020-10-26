@@ -1,0 +1,86 @@
+CREATE OR REPLACE TRIGGER cities_logs_trigger
+AFTER INSERT OR DELETE OR UPDATE ON cities
+FOR EACH ROW
+ENABLE
+DECLARE 
+    v_user VARCHAR(20);
+    cnt NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO cnt FROM city_logs;
+    
+    IF cnt = 0 THEN
+        cnt := 1;
+    ELSE
+        SELECT MAX(log_id) INTO cnt FROM city_logs;
+        cnt := cnt + 1;
+    END IF;
+    
+    IF INSERTING THEN
+        INSERT INTO city_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, '', :NEW.city_rus, 'INSERT');
+    ELSIF DELETING THEN
+        INSERT INTO city_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, :OLD.city_rus, '', 'DELETE');
+    ELSIF UPDATING THEN
+        INSERT INTO city_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, :OLD.city_rus, :NEW.city_rus, 'UPDATE');
+    END IF;
+END;
+
+CREATE OR REPLACE TRIGGER specialty_logs_trigger
+AFTER INSERT OR DELETE OR UPDATE ON specialties
+FOR EACH ROW
+ENABLE
+DECLARE 
+    v_user VARCHAR(20);
+    cnt NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO cnt FROM specialty_logs;
+
+    IF cnt = 0 THEN
+        cnt := 1;
+    ELSE
+        SELECT MAX(log_id) INTO cnt FROM specialty_logs;
+        cnt := cnt + 1;
+    END IF;
+
+    IF INSERTING THEN
+        INSERT INTO specialty_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, '', :NEW.name_rus, 'INSERT');
+    ELSIF DELETING THEN
+        INSERT INTO specialty_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, :OLD.name_rus, '', 'DELETE');
+    ELSIF UPDATING THEN
+        INSERT INTO specialty_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, :OLD.name_rus, :NEW.name_rus, 'UPDATE');
+    END IF;
+END;
+
+CREATE OR REPLACE TRIGGER univercity_logs_trigger
+AFTER INSERT OR DELETE OR UPDATE ON univercity
+FOR EACH ROW
+ENABLE
+DECLARE 
+    v_user VARCHAR(20);
+    cnt NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO cnt FROM univercity_logs;
+
+    IF cnt = 0 THEN
+        cnt := 1;
+    ELSE
+        SELECT MAX(log_id) INTO cnt FROM univercity_logs;
+        cnt := cnt + 1;
+    END IF;
+
+    IF INSERTING THEN
+        INSERT INTO univercity_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, '', :NEW.uni_ru, 'INSERT');
+    ELSIF DELETING THEN
+        INSERT INTO univercity_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, :OLD.uni_ru, '', 'DELETE');
+    ELSIF UPDATING THEN
+        INSERT INTO univercity_logs(log_id, operation_date, old_name, new_name, action) 
+            VALUES(cnt, sysdate, :OLD.uni_ru, :NEW.uni_ru, 'UPDATE');
+    END IF;
+END;
